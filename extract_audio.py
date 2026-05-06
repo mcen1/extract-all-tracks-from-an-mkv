@@ -2,6 +2,9 @@ import subprocess
 import json
 import os
 import sys
+import tkinter as tk
+from tkinter import filedialog
+
 
 def get_base_path():
     # When bundled by PyInstaller, files are extracted to _MEIPASS
@@ -69,14 +72,46 @@ def extract(input_file):
             output
         ])
 
+
 def main():
-    # Drag & drop passes file path as argument
-    if len(sys.argv) > 1:
-        for f in sys.argv[1:]:
+    try:
+        files = []
+
+        # Case 1: drag & drop worked
+        if len(sys.argv) > 1:
+            files = [f.strip('"') for f in sys.argv[1:]]
+
+        # Case 2: fallback to file picker
+        if not files:
+            print("No files passed via drag-and-drop.")
+            print("Opening file picker...")
+
+            root = tk.Tk()
+            root.withdraw()
+
+            selected = filedialog.askopenfilenames(
+                title="Select MKV file(s)",
+                filetypes=[("MKV files", "*.mkv"), ("All files", "*.*")]
+            )
+
+            files = list(selected)
+
+        if not files:
+            print("No files selected.")
+            return
+
+        for f in files:
+            if not os.path.exists(f):
+                print(f"File not found: {f}")
+                continue
+
+            print(f"\nProcessing: {f}")
             extract(f)
-    else:
-        print("Drag and drop MKV file(s) onto this EXE.")
-        input("Press Enter to exit...")
+
+    except Exception as e:
+        print(f"\nERROR: {e}")
+
+    input("\nPress Enter to exit...")
 
 if __name__ == "__main__":
     main()
