@@ -2,6 +2,9 @@ name: Build EXE
 
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - '*'
 
 jobs:
   build:
@@ -36,5 +39,6 @@ jobs:
         uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda
         with:
           files: dist/extract_audio.exe
+          tag: "${{ github.ref_name  }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
