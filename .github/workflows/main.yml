@@ -16,6 +16,15 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Download FFmpeg
+        run: |
+          curl -L -o ffmpeg.zip https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip
+          tar -xf ffmpeg.zip
+          for /d %%i in (ffmpeg-*) do set FFMPEG_DIR=%%i
+          copy %FFMPEG_DIR%\bin\ffmpeg.exe .
+          copy %FFMPEG_DIR%\bin\ffprobe.exe .
+        shell: cmd
+
       - name: Install dependencies
         run: |
           pip install pyinstaller
